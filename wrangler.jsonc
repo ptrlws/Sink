@@ -15,10 +15,12 @@
   "upload_source_maps": true,
   "observability": {
     "logs": {
-      "enabled": true
+      "enabled": true,
+      // Skip the automatic per-request log line; console output (mostly failure paths) is still kept.
+      "invocation_logs": false
     },
     "traces": {
-      "enabled": true
+      "enabled": false
     }
   },
   "ai": {
@@ -31,7 +33,9 @@
   "analytics_engine_datasets": [
     {
       "binding": "ANALYTICS",
-      "dataset": "sink" // Override with DEPLOY_ANALYTICS_DATASET (default: sink). Keep in sync with NUXT_DATASET at runtime.
+      // Override with DEPLOY_ANALYTICS_DATASET (default: sink). Keep in sync with NUXT_DATASET at runtime.
+      // Set DEPLOY_DISABLE_ANALYTICS=true to drop this binding from generated deploy config.
+      "dataset": "sink"
     }
   ],
   "kv_namespaces": [

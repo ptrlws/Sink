@@ -40,6 +40,7 @@ Add these **build variables** (do **not** put production IDs into tracked `wrang
 | `DEPLOY_R2_PREVIEW_BUCKET_NAME`  | Optional Wrangler preview R2 → `preview_bucket_name` (defaults to `DEPLOY_R2_BUCKET_NAME`) |
 | `DEPLOY_D1_DATABASE_NAME`        | Optional; default `sink`                                                                   |
 | `DEPLOY_ANALYTICS_DATASET`       | Optional; default `sink` (keep in sync with `NUXT_DATASET` if you change it)               |
+| `DEPLOY_DISABLE_ANALYTICS`       | Optional; exactly `true` deploys without the `ANALYTICS` binding, so no visits are logged  |
 
 `pnpm deploy:worker` generates gitignored `wrangler.deploy.jsonc` from these values, updates the D1 schema, then deploys. When you connect the repo, Cloudflare creates a deploy token — no extra credential to paste.
 

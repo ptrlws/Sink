@@ -127,5 +127,6 @@ Safe browsing example: Cloudflare Family DNS `https://family.cloudflare-dns.com/
 | `NUXT_AI_OG_PROMPT`           | built-in                     | Custom social-preview prompt                                                                                 |
 | `DEPLOY_D1_DATABASE_NAME`     | `sink`                       | Overrides `d1_databases[].database_name` in generated deploy config                                          |
 | `DEPLOY_ANALYTICS_DATASET`    | `sink`                       | Overrides `analytics_engine_datasets[].dataset` in generated deploy config; keep aligned with `NUXT_DATASET` |
+| `DEPLOY_DISABLE_ANALYTICS`    | `false`                      | Workers Builds only. Exactly `true` drops the `ANALYTICS` binding from generated deploy config               |
 
 See [Analytics](/features/analytics) and [API](/api/).

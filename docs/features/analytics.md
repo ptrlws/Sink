@@ -35,6 +35,12 @@ Numbers can be **approximate** (Cloudflare samples high traffic). Low traffic ca
 
 To hide detected bots from stats and [click webhooks](/configuration/webhooks), set `NUXT_DISABLE_BOT_ACCESS_LOG=true`.
 
+## Turn it off
+
+Remove the `ANALYTICS` binding and Sink stops recording visits. On **Workers**, set the build variable `DEPLOY_DISABLE_ANALYTICS=true` instead of deleting the binding in the dashboard; every Git deploy rebuilds bindings from config and would add it back. On **Pages**, delete it under **Settings → Bindings**.
+
+Cloudflare keeps Analytics Engine data for three months and offers no delete. Data already written expires on that schedule.
+
 ## Near-realtime page
 
 ::: tip Not a live stream
