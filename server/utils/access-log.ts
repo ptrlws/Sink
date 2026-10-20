@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3'
+import { createHmac } from 'node:crypto'
 import { parseAcceptLanguage } from 'intl-parse-accept-language'
 import { UAParser } from 'ua-parser-js'
 import {
@@ -21,8 +22,10 @@ function toBlobNumber(blob: string) {
 export const blobsMap = {
   blob1: 'slug',
   blob2: 'url',
+  // No longer written; kept so blob numbering stays stable for older rows.
   blob3: 'ua',
-  blob4: 'ip',
+  // Pseudonymous visitor ID (see getVisitorId); older rows hold the raw IP.
+  blob4: 'visitor',
   blob5: 'referer',
   blob6: 'country',
   blob7: 'region',
@@ -107,6 +110,19 @@ export function doubles2logs(doubles: number[]) {
   }, {} as Partial<LogsMap>)
 }
 
+/**
+ * Keyed one-way hash of the client IP that rotates every UTC day, so unique
+ * visitors can be counted without storing the address. IDs cannot be linked
+ * across days, and changing NUXT_SITE_TOKEN changes every ID.
+ */
+function getVisitorId(ip: string | undefined, secret: string): string | undefined {
+  if (!ip)
+    return undefined
+
+  const day = new Date().toISOString().slice(0, 10)
+  return createHmac('sha256', secret).update(`sink-visitor\0${day}\0${ip}`).digest('hex').slice(0, 16)
+}
+
 function getCountryName(country?: string): string {
   try {
     return new Intl.DisplayNames(['en'], { type: 'region' }).of(country || 'WD') || 'Worldwide'
@@ -142,18 +158,16 @@ export function collectAccessLog(event: H3Event): AccessLogResult | undefined {
     || ['crawler', 'fetcher'].includes(uaInfo?.browser?.type || '')
     || ['spider', 'bot'].includes(uaInfo?.browser?.name?.toLowerCase() || '')
 
-  const { disableBotAccessLog } = useRuntimeConfig(event)
-  if (isBot && disableBotAccessLog) {
-    console.log('bot access log disabled:', userAgent)
+  const { disableBotAccessLog, siteToken } = useRuntimeConfig(event)
+  if (isBot && disableBotAccessLog)
     return
-  }
 
   const countryName = getCountryName(cf?.country)
   const logs = {
     url: link.url,
     slug: link.slug,
-    ua: userAgent,
-    ip,
+    ua: undefined, // The full user agent is not stored; only parsed fields below.
+    visitor: getVisitorId(ip, siteToken),
     referer,
     country: cf?.country,
     region: `${getFlag(cf?.country)} ${[cf?.region, countryName].filter(Boolean).join(',')}`,

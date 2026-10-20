@@ -22,7 +22,7 @@ vi.mock('../../server/utils/access-log', async () => {
     blob1: 'slug',
     blob2: 'url',
     blob3: 'ua',
-    blob4: 'ip',
+    blob4: 'visitor',
     blob5: 'referer',
     blob6: 'country',
     blob7: 'region',

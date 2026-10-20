@@ -33,6 +33,8 @@ Successful visits feed counters, charts, heatmaps, recent events, and locations.
 
 Numbers can be **approximate** (Cloudflare samples high traffic). Low traffic can look uneven for the same reason.
 
+Sink does not store visitor IP addresses or full user-agent strings. Unique visitors are counted with a keyed hash of the IP that changes every UTC day, so a person who returns on three days counts as three visitors over that range. Changing `NUXT_SITE_TOKEN` also resets the hash.
+
 To hide detected bots from stats and [click webhooks](/configuration/webhooks), set `NUXT_DISABLE_BOT_ACCESS_LOG=true`.
 
 ## Turn it off

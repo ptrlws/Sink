@@ -68,7 +68,7 @@ function filteredQuery(query: FilterQuery, event: H3Event) {
 export function buildCountersQuery(query: FilterQuery, event: H3Event) {
   const statement = filteredQuery(query, event).select([
     sql<number>`SUM(_sample_interval)`.as('visits'),
-    weightedDistinct(logsMap.ip!).as('visitors'),
+    weightedDistinct(logsMap.visitor!).as('visitors'),
     weightedDistinct(logsMap.referer!).as('referers'),
   ])
 
@@ -84,7 +84,7 @@ export function buildViewsQuery(query: ViewsQuery, event: H3Event) {
     .select([
       sql<string>`formatDateTime(${sql.ref('timestamp')}, ${sql.lit(viewUnits[query.unit])}, ${sql.lit(timezone)})`.as('time'),
       sql<number>`SUM(_sample_interval)`.as('visits'),
-      sql<number>`COUNT(DISTINCT ${sql.ref(logsMap.ip!)})`.as('visitors'),
+      sql<number>`COUNT(DISTINCT ${sql.ref(logsMap.visitor!)})`.as('visitors'),
     ])
     .groupBy('time')
     .orderBy('time')
@@ -112,7 +112,7 @@ export function buildHeatmapQuery(query: HeatmapQuery, event: H3Event) {
       sql<number>`toDayOfWeek(${tzTimestamp})`.as('weekday'),
       sql<number>`toHour(${tzTimestamp})`.as('hour'),
       sql<number>`SUM(_sample_interval)`.as('visits'),
-      sql<number>`COUNT(DISTINCT ${sql.ref(logsMap.ip!)})`.as('visitors'),
+      sql<number>`COUNT(DISTINCT ${sql.ref(logsMap.visitor!)})`.as('visitors'),
     ])
     .groupBy(['weekday', 'hour'])
     .orderBy('weekday')
@@ -124,7 +124,7 @@ export function buildAccessExportQuery(query: StatsExportQuery, event: H3Event) 
     .select([
       sql.ref(logsMap.slug!).as('slug'),
       sql.ref(logsMap.url!).as('url'),
-      weightedDistinct(logsMap.ip!).as('viewer'),
+      weightedDistinct(logsMap.visitor!).as('viewer'),
       sql<number>`SUM(_sample_interval)`.as('views'),
       weightedReferers(logsMap.referer!).as('referer'),
     ])
