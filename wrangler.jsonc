@@ -33,9 +33,7 @@
   "analytics_engine_datasets": [
     {
       "binding": "ANALYTICS",
-      // Override with DEPLOY_ANALYTICS_DATASET (default: sink). Keep in sync with NUXT_DATASET at runtime.
-      // Set DEPLOY_DISABLE_ANALYTICS=true to drop this binding from generated deploy config.
-      "dataset": "sink"
+      "dataset": "sink" // Override with DEPLOY_ANALYTICS_DATASET (default: sink). Keep in sync with NUXT_DATASET at runtime.
     }
   ],
   "kv_namespaces": [

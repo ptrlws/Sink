@@ -1,5 +1,6 @@
 import type { H3Event } from 'h3'
 import type { Compilable } from 'kysely'
+import type { LogsMap } from '../../server/utils/access-log'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { writeAccessLog } from '../../server/utils/access-log'
 import { useWAE } from '../../server/utils/cloudflare'
@@ -21,10 +22,40 @@ afterEach(() => {
 })
 
 describe('writeAccessLog', () => {
+  function eventWithAnalytics(writeDataPoint: ReturnType<typeof vi.fn>) {
+    return {
+      context: {
+        cloudflare: { env: { ANALYTICS: { writeDataPoint } } },
+        link: { id: 'link-id' },
+      },
+    } as unknown as H3Event
+  }
+
   it('silently skips production writes without an Analytics Engine binding', () => {
     vi.stubEnv('NODE_ENV', 'production')
+    vi.stubGlobal('useRuntimeConfig', () => ({ disableAccessLog: false }))
 
-    expect(() => writeAccessLog(event, {})).not.toThrow()
+    expect(() => writeAccessLog(event, {} as LogsMap)).not.toThrow()
+  })
+
+  it('writes a data point when access logging is enabled', () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubGlobal('useRuntimeConfig', () => ({ disableAccessLog: false }))
+    const writeDataPoint = vi.fn()
+
+    writeAccessLog(eventWithAnalytics(writeDataPoint), {} as LogsMap)
+
+    expect(writeDataPoint).toHaveBeenCalledOnce()
+  })
+
+  it('skips the write when NUXT_DISABLE_ACCESS_LOG is set', () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubGlobal('useRuntimeConfig', () => ({ disableAccessLog: true }))
+    const writeDataPoint = vi.fn()
+
+    writeAccessLog(eventWithAnalytics(writeDataPoint), {} as LogsMap)
+
+    expect(writeDataPoint).not.toHaveBeenCalled()
   })
 })
 

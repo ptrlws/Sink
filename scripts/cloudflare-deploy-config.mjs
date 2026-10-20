@@ -28,8 +28,6 @@ const deployEnvSchema = z.object({
   // Optional Wrangler preview bucket; falls back to DEPLOY_R2_BUCKET_NAME when R2 is enabled
   DEPLOY_R2_PREVIEW_BUCKET_NAME: optionalName,
   DEPLOY_ANALYTICS_DATASET: defaultName,
-  // Exactly "true" drops the ANALYTICS binding so no access-log data points are written
-  DEPLOY_DISABLE_ANALYTICS: z.string().trim().optional().transform(value => value === 'true'),
 })
 
 async function loadEnv() {
@@ -72,19 +70,13 @@ if (parseErrors.length > 0) {
 const env = await loadEnv()
 const d1 = getBinding(config, 'd1_databases', 'DB')
 const kv = getBinding(config, 'kv_namespaces', 'KV')
+const analytics = getBinding(config, 'analytics_engine_datasets', 'ANALYTICS')
 
 d1.database_id = env.DEPLOY_D1_DATABASE_ID
 d1.database_name = env.DEPLOY_D1_DATABASE_NAME
 kv.id = env.DEPLOY_KV_NAMESPACE_ID
 kv.preview_id = env.DEPLOY_KV_PREVIEW_NAMESPACE_ID ?? env.DEPLOY_KV_NAMESPACE_ID
-
-if (env.DEPLOY_DISABLE_ANALYTICS) {
-  config.analytics_engine_datasets = config.analytics_engine_datasets.filter(({ binding }) => binding !== 'ANALYTICS')
-}
-else {
-  const analytics = getBinding(config, 'analytics_engine_datasets', 'ANALYTICS')
-  analytics.dataset = env.DEPLOY_ANALYTICS_DATASET
-}
+analytics.dataset = env.DEPLOY_ANALYTICS_DATASET
 
 if (env.DEPLOY_R2_BUCKET_NAME) {
   const r2 = getBinding(config, 'r2_buckets', 'R2')

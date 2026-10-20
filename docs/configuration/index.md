@@ -121,12 +121,12 @@ Safe browsing example: Cloudflare Family DNS `https://family.cloudflare-dns.com/
 | `NUXT_DATASET`                | `sink`                       | Analytics dataset name; must match the `ANALYTICS` binding                                                   |
 | `NUXT_LIST_QUERY_LIMIT`       | `500`                        | Max rows in analytics lists                                                                                  |
 | `NUXT_DISABLE_BOT_ACCESS_LOG` | `false`                      | `true` drops detected bots from analytics and webhooks                                                       |
+| `NUXT_DISABLE_ACCESS_LOG`     | `false`                      | `true` stops recording visits in analytics; click webhooks still fire                                        |
 | `NUXT_DISABLE_AUTO_BACKUP`    | `false`                      | `true` turns off scheduled R2 backups                                                                        |
 | `NUXT_AI_MODEL`               | `@cf/qwen/qwen3-30b-a3b-fp8` | Workers AI model                                                                                             |
 | `NUXT_AI_PROMPT`              | built-in                     | Custom slug prompt must keep `{slugRegex}`                                                                   |
 | `NUXT_AI_OG_PROMPT`           | built-in                     | Custom social-preview prompt                                                                                 |
 | `DEPLOY_D1_DATABASE_NAME`     | `sink`                       | Overrides `d1_databases[].database_name` in generated deploy config                                          |
 | `DEPLOY_ANALYTICS_DATASET`    | `sink`                       | Overrides `analytics_engine_datasets[].dataset` in generated deploy config; keep aligned with `NUXT_DATASET` |
-| `DEPLOY_DISABLE_ANALYTICS`    | `false`                      | Workers Builds only. Exactly `true` drops the `ANALYTICS` binding from generated deploy config               |
 
 See [Analytics](/features/analytics) and [API](/api/).

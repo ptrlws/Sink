@@ -39,7 +39,9 @@ To hide detected bots from stats and [click webhooks](/configuration/webhooks), 
 
 ## Turn it off
 
-Remove the `ANALYTICS` binding and Sink stops recording visits. On **Workers**, set the build variable `DEPLOY_DISABLE_ANALYTICS=true` instead of deleting the binding in the dashboard; every Git deploy rebuilds bindings from config and would add it back. On **Pages**, delete it under **Settings → Bindings**.
+Set the runtime variable `NUXT_DISABLE_ACCESS_LOG=true` and Sink stops recording visits. It works the same on Workers and Pages, and [click webhooks](/configuration/webhooks) keep firing. The dashboard still shows anything recorded earlier while the account ID and API token are set.
+
+Prefer this to deleting the `ANALYTICS` binding: on Workers, Git deploys rebuild bindings from `wrangler.jsonc`, which adds it back.
 
 Cloudflare keeps Analytics Engine data for three months and offers no delete. Data already written expires on that schedule.
 

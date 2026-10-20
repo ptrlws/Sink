@@ -201,6 +201,10 @@ export function collectAccessLog(event: H3Event): AccessLogResult | undefined {
 }
 
 export function writeAccessLog(event: H3Event, accessLogs: LogsMap): void {
+  // Only the analytics write is skipped; click webhooks still use the collected context.
+  if (useRuntimeConfig(event).disableAccessLog)
+    return
+
   const { cloudflare } = event.context
   const link = event.context.link || {}
 
